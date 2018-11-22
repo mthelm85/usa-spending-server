@@ -1,10 +1,4 @@
-const MongoClient = require('mongodb').MongoClient,
-      exec = require('child_process').exec,
-      getData = require('./getData.js')
-
-const url = 'mongodb://localhost:27017/usa-spending'
-
-const updateMongoDB = async () => {
+module.exports = async (exec, getData, MongoClient, url) => {
   await getData.updateData()
   MongoClient.connect(url, { useNewUrlParser: true }, async (err, client) => {
     if (err) throw err
@@ -20,5 +14,3 @@ const updateMongoDB = async () => {
     console.log(stderr)
   })
 }
-
-updateMongoDB()
