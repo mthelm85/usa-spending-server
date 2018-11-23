@@ -6,11 +6,11 @@ const bodyParser = require('body-parser'),
       moment = require('moment'),
       MongoClient = require('mongodb').MongoClient,
       morgan = require('morgan'),
+      port = process.env.PORT || 3000,
       url = 'mongodb://localhost:27017/usa-spending',
       schedule = require('node-schedule')
 
-const app = express(),
-      port = process.env.PORT || 3000
+const app = express()
 
 app.use(morgan('dev'))
 app.use(cors({
@@ -21,14 +21,25 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-const rule = new schedule.RecurrenceRule()
-rule.dayOfWeek = [0, 1, 2, 3, 4]
-rule.hour = 1
-rule.minute = 0
+const updateRule = new schedule.RecurrenceRule()
+updateRule.dayOfWeek = [0, 1, 2, 3, 4]
+updateRule.hour = 1
+updateRule.minute = 0
 
-schedule.scheduleJob(rule, () => {
+const deleteRule = new schedule.RecurrenceRule()
+deleteRule.dayOfWeek = [0, 1, 2, 3, 4]
+deleteRule.hour = 2
+deleteRule.minute = 0
+
+schedule.scheduleJob(updateRule, () => {
   require('./updateMongo.js')(exec, getData, MongoClient, url)
 })
+
+// schedule.scheduleJob(deleteRule, () => {
+//   require('./deleteNoLaborStandards.js')(MongoClient, url)
+// })
+
+require('./deleteNoLaborStandards.js')(MongoClient, url)
 
 MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
   if (err) throw err

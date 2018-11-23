@@ -1,5 +1,13 @@
 module.exports = (app, db, moment) => {
   app.get('/', (req, res) => {
-    res.json({ result: 'it worked : )' })
+    db.collection('awards')
+    .find({ $and: [
+      { 'primary_place_of_performance_state_code': req.query.state_code },
+      { 'primary_place_of_performance_county_name': req.query.county_name }
+    ] })
+    .toArray((err, docs) => {
+      if (err) res.json({ error: err })
+      res.json({ results: docs })
+    })
   })
 }
