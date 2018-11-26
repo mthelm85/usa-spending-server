@@ -13,7 +13,9 @@ module.exports = (app, db, moment) => {
 
   app.get('/zip', (req, res) => {
     db.collection('zip_latlng')
-    .find({ ZIP: req.query.zip })
+    .find({
+      ZIP: { $in: req.query.zips }
+    })
     .toArray((err, docs) => {
       res.json({ results: docs })
     })
