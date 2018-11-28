@@ -42,7 +42,7 @@ schedule.scheduleJob(updateRule, () => {
 })
 
 schedule.scheduleJob(deleteRule, () => {
-  require('./deleteNoLaborStandards.js')(MongoClient, url)
+  require('./purgeDB.js')(MongoClient, url)
 })
 
 MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
